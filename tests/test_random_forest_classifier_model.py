@@ -20,7 +20,7 @@ def test_model_prediction():
         timestamp=int(datetime.now().timestamp()), volume='10000'
     ))
     assert len(prediction) > 0, "Prediction is empty."
-    assert type(prediction[0]) is numpy.int64, f"Expected numpy.int64, got {type(prediction[0])}"
+    assert isinstance(prediction[0], numpy.int64), f"Expected numpy.int64, got {type(prediction[0])}"
     assert prediction[0] in (0, 1), f"Expected 0 or 1, got {prediction[0]}"
 
 

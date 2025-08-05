@@ -49,6 +49,7 @@ class RandomForestClassifierHelper:
         )
 
         with parallel_backend('threading', n_jobs=12):
+            print(X_train.shape, y_train.shape)
             rand_search.fit(X_train, y_train)
 
         best_rf = rand_search.best_estimator_

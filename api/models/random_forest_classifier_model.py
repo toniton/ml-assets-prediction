@@ -9,9 +9,9 @@ from typing import Self
 import joblib
 from sklearn.ensemble import RandomForestClassifier
 
-from src.entities.asset_entity import AssetEntity
 from api.interfaces.prediction_model import PredictionModel
 from api.interfaces.market_data import MarketData
+from src.entities.asset_entity import AssetEntity
 from src.factories.dataframe_factory import DataframeFactory
 
 logger = logging.getLogger(__name__)
@@ -38,13 +38,13 @@ class RandomForestClassifierModel(PredictionModel, ABC):
                 return self
             except Exception as exc:
                 logger.exception(f"Failed loading RandomForestClassifierModel.")
-                raise Exception(["Unable to load model for the requested asset.", self.asset.name, exc])
-        logger.warning(f"Model not loaded and may lead to predict failure! Check path: filepath={filename}.")
+                raise RuntimeError(["Unable to load model for the requested asset.", self.asset.name, exc])
+        logger.warning("Model not loaded and may lead to predict failure! Check path: filepath=%s.", filename)
         raise NotImplementedError("# TODO: Download model from artifactory.")
 
     def predict(self, current_data: MarketData) -> list[int]:
         if self.model:
             data = DataframeFactory.from_market_data_entity(self.asset, current_data)
             return self.model.predict(data)
-        logger.exception(f"Prediction failure! Could not find RandomForestClassifierModel.")
-        raise Exception(["You need to load or train model before prediction."])
+        logger.exception("Prediction failure! Could not find RandomForestClassifierModel.")
+        raise RuntimeError(["You need to load or train model before prediction."])

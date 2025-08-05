@@ -20,18 +20,18 @@ class RandomForestClassifierTrainer(Trainer):
 
     def __save_model(self, asset: AssetEntity, model: RandomForestClassifier) -> None:
         filename = self.get_filename(asset, "random-forest")
-        logger.info(f"Saving trained model to path: filepath={filename}.")
+        logger.info("Saving trained model to path: filepath=%s.", filename)
         joblib.dump(model, filename)
 
     def train_and_save(self, asset: AssetEntity):
-        logger.info(f"Training model for asset: name={asset.name}.")
+        logger.info("Training model for asset: name=%s.", asset.name)
         historical_data = self.data_provider.get_ticker_data(asset.ticker_symbol)
         trained_model = self.__train_model(historical_data)
         self.__save_model(asset, trained_model)
 
     def fine_tune_model(self, asset: AssetEntity, recent_data: DataFrame):
-        logger.info(f"Fine-tuning model for asset: name={asset.name}.")
+        logger.info("Fine-tuning model for asset: name=%s.", asset.name)
         historical_data = self.data_provider.update_ticker_data(asset.ticker_symbol, recent_data)
-        logger.warning(f"Fine-tuning this model will re-train on {len(historical_data)} records.")
+        logger.warning("Fine-tuning this model will re-train on %s records.", len(historical_data))
         trained_model = self.__train_model(historical_data)
         self.__save_model(asset, trained_model)

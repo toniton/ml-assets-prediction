@@ -17,8 +17,8 @@ class LocalStorageDataProvider(HistoryDataProvider):
 
     def get_ticker_data(
             self, ticker_symbol: str,
-            from_date: Optional[datetime] = None,
-            to_date: Optional[datetime] = None
+            _from_date: Optional[datetime] = None,
+            _to_date: Optional[datetime] = None
     ) -> DataFrame:
         file_path = f"{self.directory}/coinmarketcap/history/{ticker_symbol.lower()}-usd.csv"
 
@@ -26,7 +26,7 @@ class LocalStorageDataProvider(HistoryDataProvider):
             history = pd.read_csv(file_path, sep=";")
             return history
 
-        raise Exception(f"Data source for ticker: {ticker_symbol} does not exist in: {file_path}.")
+        raise FileNotFoundError(f"Data source for ticker: {ticker_symbol} does not exist in: {file_path}.")
 
     def update_ticker_data(self, ticker_symbol: str, market_data: DataFrame) -> DataFrame:
         file_path = f"{self.directory}/coinmarketcap/history/{ticker_symbol.lower()}-usd.csv"

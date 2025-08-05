@@ -3,8 +3,8 @@ import logging
 from pandas import DataFrame
 
 from api import PredictionModel, RandomForestClassifierModel
-from src.entities.asset_entity import AssetEntity
 from api.interfaces.market_data import MarketData
+from src.entities.asset_entity import AssetEntity
 from src.factories.dataframe_factory import DataframeFactory
 from src.providers.history_data_provider import HistoryDataProvider
 from src.training.models.random_forest_classifier_trainer import RandomForestClassifierTrainer

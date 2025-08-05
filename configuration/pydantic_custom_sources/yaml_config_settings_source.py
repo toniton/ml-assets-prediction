@@ -24,7 +24,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 
     def get_field_value(
             self, field: FieldInfo, field_name: str
-    ) -> Tuple[Any, str, bool]:
+    ) -> tuple[Any, str, bool]:
         if field.exclude:
             return None, "", False
         file = self.yaml_file
@@ -37,11 +37,11 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
             except Exception as exc:
                 raise ValueError(f"Unsupported yaml file format! {path}, {exc}") from exc
 
-    def __call__(self) -> Dict[str, Any]:
-        d: Dict[str, Any] = {}
+    def __call__(self) -> dict[str, Any]:
+        d: dict[str, Any] = {}
 
         for field_name, field in self.settings_cls.model_fields.items():
-            field_value, field_key, value_is_complex = self.get_field_value(
+            field_value, field_key, _value_is_complex = self.get_field_value(
                 field, field_name
             )
             if field_value is not None:
