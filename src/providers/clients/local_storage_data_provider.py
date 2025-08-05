@@ -19,7 +19,7 @@ class LocalStorageDataProvider(HistoryDataProvider):
             self, ticker_symbol: str,
             from_date: Optional[datetime] = None,
             to_date: Optional[datetime] = None
-    ):
+    ) -> DataFrame:
         file_path = f"{self.directory}/coinmarketcap/history/{ticker_symbol.lower()}-usd.csv"
 
         if os.path.exists(file_path):
