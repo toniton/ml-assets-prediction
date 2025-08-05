@@ -62,6 +62,7 @@ dmypy.json
 
 # Data files
 *.csv
+!tests/datasets/*.csv
 *.tsv
 *.parquet
 *.h5
