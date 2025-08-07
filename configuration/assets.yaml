@@ -2,6 +2,8 @@ assets:
   - name: "Bitcoin"
     keywords: [ "BTC" ]
     ticker_symbol: "BTC"
+    exchange: "CRYPTO_DOT_COM"
+    id: 2781
     decimal_places: 8
     market_cap: "13300824097"
 #  - name: "DOGE (Crypto.com)"

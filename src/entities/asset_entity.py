@@ -8,4 +8,6 @@ class AssetEntity:
     ticker_symbol: str
     decimal_places: int
     name: str
+    id: float
+    exchange: str
     market_cap: str
