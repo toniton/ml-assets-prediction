@@ -11,6 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 from api.interfaces.prediction_model import PredictionModel
 from api.interfaces.market_data import MarketData
+from constants import PROJECT_ROOT
 from src.entities.asset_entity import AssetEntity
 from src.factories.dataframe_factory import DataframeFactory
 
@@ -25,7 +26,9 @@ class RandomForestClassifierModel(PredictionModel, ABC):
         self.model: RandomForestClassifier | None = None
 
     def get_filename(self) -> Path:
-        filename = Path(f"{self.directory}/{self.asset.ticker_symbol.lower()}-random-forest.joblib")
+        filename = PROJECT_ROOT.joinpath(
+            Path(f"{self.directory}/{self.asset.ticker_symbol.lower()}-random-forest.joblib")
+        )
         return filename
 
     def load_model(self) -> Self:

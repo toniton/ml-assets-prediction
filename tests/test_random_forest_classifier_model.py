@@ -13,8 +13,12 @@ from src.training.models.random_forest_classifier_trainer import RandomForestCla
 
 
 def test_model_prediction():
-    asset = AssetEntity(id=2847, name='BTC', ticker_symbol='BTC', exchange='CRYPTO_DOT_COM', market_cap='123', decimal_places=8, keywords=[])
-    classifier = RandomForestClassifierModel(asset, './models').load_model()
+    asset = AssetEntity(
+        id=2847, name='BTC', ticker_symbol='BTC',
+        exchange='CRYPTO_DOT_COM', market_cap='123',
+        decimal_places=8, keywords=[]
+    )
+    classifier = RandomForestClassifierModel(asset, './tests/models').load_model()
     prediction = classifier.predict(MarketData(
         low_price='1', high_price='2', close_price='1.5',
         timestamp=int(datetime.now().timestamp()), volume='10000'
@@ -26,10 +30,14 @@ def test_model_prediction():
 
 def test_model_training():
     with tempfile.TemporaryDirectory() as temp_model_dir:
-        test_dataset_directory = './datasets'
+        test_dataset_directory = './tests/datasets'
         pre_processor = CoinMarketCapPreProcessor()
         data_provider = LocalStorageDataProvider(directory=test_dataset_directory)
-        asset = AssetEntity(id=2847, name='BTC', ticker_symbol='BTC', exchange='CRYPTO_DOT_COM', market_cap='123', decimal_places=8, keywords=[])
+        asset = AssetEntity(
+            id=2847, name='BTC', ticker_symbol='BTC',
+            exchange='CRYPTO_DOT_COM', market_cap='123',
+            decimal_places=8, keywords=[]
+        )
         trainer = RandomForestClassifierTrainer(temp_model_dir, data_provider, pre_processor)
         trainer.train_and_save(asset)
 

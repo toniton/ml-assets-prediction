@@ -3,6 +3,7 @@ from pathlib import Path
 
 from pandas import DataFrame
 
+from constants import PROJECT_ROOT
 from src.entities.asset_entity import AssetEntity
 from src.providers.preprocessor import PreProcessor
 from src.providers.history_data_provider import HistoryDataProvider
@@ -15,7 +16,7 @@ class Trainer(ABC):
         self.pre_processor = pre_processor
 
     def get_filename(self, asset: AssetEntity, model_name: str) -> Path:
-        filename = Path(f"{self.model_dir}/{asset.ticker_symbol.lower()}-{model_name}.joblib")
+        filename = PROJECT_ROOT.joinpath(Path(f"{self.model_dir}/{asset.ticker_symbol.lower()}-{model_name}.joblib"))
         return filename
 
     @abstractmethod
