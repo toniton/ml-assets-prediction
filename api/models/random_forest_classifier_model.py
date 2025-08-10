@@ -36,11 +36,11 @@ class RandomForestClassifierModel(PredictionModel, ABC):
         logger.info(f"Fetching RandomForestClassifierModel from file: filepath={filename}.")
         if os.path.isfile(filename):
             try:
-                logger.info(f"Loading RandomForestClassifierModel from path.")
+                logger.info("Loading RandomForestClassifierModel from path.")
                 self.model = joblib.load(filename)
                 return self
             except Exception as exc:
-                logger.exception(f"Failed loading RandomForestClassifierModel.")
+                logger.exception("Failed loading RandomForestClassifierModel.")
                 raise RuntimeError(["Unable to load model for the requested asset.", self.asset.name, exc])
         logger.warning("Model not loaded and may lead to predict failure! Check path: filepath=%s.", filename)
         raise NotImplementedError("# TODO: Download model from artifactory.")

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pandas as pd
 
 from src.entities.asset_entity import AssetEntity
@@ -9,7 +7,7 @@ from api.interfaces.market_data import MarketData
 class DataframeFactory:
     @staticmethod
     def from_market_data_entity(asset: AssetEntity, market_data: MarketData) -> pd.DataFrame:
-        _date_utc_now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+        # _date_utc_now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
         return pd.DataFrame({
             # 'timeOpen': [market_data.timestamp],
             # 'timeClose': [market_data.timestamp],
