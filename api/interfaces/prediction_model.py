@@ -1,22 +1,37 @@
-from __future__ import annotations
+from abc import ABC, abstractmethod
+from typing import Generic, TypeVar
 
-import abc
-from abc import ABC
+from pandas import DataFrame
 
 from api.interfaces.market_data import MarketData
 
+T = TypeVar('T')
 
-class PredictionModel(ABC):
-    def __init__(self):
-        self.model = None
 
-    @abc.abstractmethod
-    def load_model(self) -> PredictionModel:
-        raise NotImplementedError()
+class PredictionModel(ABC, Generic[T]):
+    @property
+    @abstractmethod
+    def model(self) -> T:
+        pass
 
-    def is_loaded(self) -> bool:
-        return self.model is not None
+    @property
+    @abstractmethod
+    def feature_names(self) -> list[str]:
+        pass
 
-    @abc.abstractmethod
-    def predict(self, current_data: MarketData) -> list[int]:
-        raise NotImplementedError()
+    @property
+    @abstractmethod
+    def training_subset(self) -> DataFrame:
+        pass
+
+    @abstractmethod
+    def predict(self, current_data: list[MarketData], update: bool = True):
+        pass
+
+    @abstractmethod
+    def fine_tune(self, update_data: DataFrame):
+        raise NotImplementedError("PredictionModel method:`train_and_save` has not yet been implemented!")
+
+    @abstractmethod
+    def set_cache_dir(self, cache_dir: str):
+        raise NotImplementedError("PredictionModel method:`set_cache_dir` has not yet been implemented!")

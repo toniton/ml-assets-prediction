@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from pandas import DataFrame
 
 from constants import PROJECT_ROOT
 from src.entities.asset_entity import AssetEntity
@@ -15,14 +14,10 @@ class Trainer(ABC):
         self.data_provider = data_provider
         self.pre_processor = pre_processor
 
-    def get_filename(self, asset: AssetEntity, model_name: str) -> Path:
-        filename = PROJECT_ROOT.joinpath(Path(f"{self.model_dir}/{asset.ticker_symbol.lower()}-{model_name}.joblib"))
-        return filename
+    def _get_file_path(self, asset: AssetEntity, model_name: str) -> Path:
+        file_path = PROJECT_ROOT.joinpath(Path(f"{self.model_dir}/{asset.ticker_symbol.lower()}-{model_name}.joblib"))
+        return file_path
 
     @abstractmethod
     def train_and_save(self, asset: AssetEntity):
-        raise NotImplementedError("Trainer method:`train_and_save` has not yet been implemented!")
-
-    @abstractmethod
-    def fine_tune_model(self, asset: AssetEntity, market_data: DataFrame):
         raise NotImplementedError("Trainer method:`train_and_save` has not yet been implemented!")

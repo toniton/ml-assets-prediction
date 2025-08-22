@@ -1,20 +1,21 @@
 from __future__ import annotations
 import logging
-from pandas import DataFrame
 
-from api import PredictionModel, RandomForestClassifierModel
+from api import PredictionModelLoader
 from api.interfaces.market_data import MarketData
 from src.entities.asset_entity import AssetEntity
-from src.factories.dataframe_factory import DataframeFactory
 from src.providers.history_data_provider import HistoryDataProvider
-from src.training.models.random_forest_classifier_trainer import RandomForestClassifierTrainer
+from src.training.random_forest.random_forest_classifier_model import RandomForestClassifierModel
+from src.training.random_forest.random_forest_classifier_trainer import RandomForestClassifierTrainer
 
 
 class PredictionEngine:
-    def __init__(self, assets: list[AssetEntity], data_provider: HistoryDataProvider, prediction_dir: str):
-        self.models: dict[str, PredictionModel] = {}
-        self.history_cache: dict[str, DataFrame] = {}
+    def __init__(
+            self, assets: list[AssetEntity], data_provider: HistoryDataProvider,
+            prediction_dir: str, prediction_model_loader: PredictionModelLoader
+    ):
         self.asset_lookup: dict[str, AssetEntity] = {}
+        self.prediction_model_loader = prediction_model_loader
         self.data_provider: HistoryDataProvider = data_provider
         self.assets = assets
         self.prediction_dir = prediction_dir
@@ -23,12 +24,7 @@ class PredictionEngine:
     def init_application(self):
         self.load_models()
         for asset in self.assets:
-            try:
-                self.asset_lookup[asset.ticker_symbol] = asset
-                data = self.data_provider.get_ticker_data(asset.ticker_symbol)
-                self.history_cache[asset.ticker_symbol] = data.head(1200).copy()
-            except Exception as exc:
-                logging.error(["Error occurred initializing application. ->", exc])
+            self.asset_lookup[asset.ticker_symbol] = asset
 
     # def start_training(self):
     #     try:
@@ -49,43 +45,25 @@ class PredictionEngine:
             trainer.train_and_save(asset)
         return self
 
-    def load_model(self, ticker_symbol: str) -> PredictionModel:
-        if ticker_symbol in self.models:
-            model = self.models[ticker_symbol]
-            if model.model is None:
-                model.load_model()
-            return model
-        raise ValueError(
-            f"Model for {ticker_symbol} ticker not found in prediction engine. "
-            f"Load assets model and try again."
-        )
-
-    def load_models(self):
+    def load_models(self) -> None:
         for asset in self.assets:
             try:
-                model = RandomForestClassifierModel(asset, self.prediction_dir)
-                model.load_model()
-                self.models[asset.ticker_symbol] = model
+                self.prediction_model_loader.load_model(asset, str(RandomForestClassifierModel.__name__).lower())
             except Exception as exc:
                 logging.error(["Error occurred loading model. ->", exc])
-        return self.models
 
     def predict(self, ticker_symbol: str, current_data: MarketData) -> int:
-        prediction_model = self.models.get(ticker_symbol)
+        asset = self.asset_lookup.get(ticker_symbol.lower())
+        if not asset:
+            raise ValueError(f"Asset with ticker symbol {ticker_symbol} not found in prediction engine.")
+        prediction_model = self.prediction_model_loader.get_model(
+            asset, str(RandomForestClassifierModel.__name__).lower()
+        )
         if prediction_model:
-            predictions = prediction_model.predict(current_data)
+            predictions = prediction_model.predict([current_data])
             return predictions[0]
 
         raise ValueError(
             f"Model for {ticker_symbol} ticker not found in prediction engine. "
             f"Load assets model and try again."
         )
-
-    def fine_tune_model(self, ticker_symbol: str, market_data: MarketData):
-        preprocessor = self.data_provider.get_preprocessor()
-        random_forest_classifier_trainer = RandomForestClassifierTrainer(
-            self.prediction_dir, self.data_provider, preprocessor
-        )
-        asset = self.asset_lookup.get(ticker_symbol)
-        recent_data = DataframeFactory.from_market_data_entity(asset, market_data)
-        random_forest_classifier_trainer.fine_tune_model(asset, recent_data)
